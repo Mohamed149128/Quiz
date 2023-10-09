@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Landen en Hoofdsteden</title>
+
+    <!-- NavBar -->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">QuizGames</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="Quiz1.html">Landen en Hoofdsteden <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="Quiz2.html">Pokemon en Evoluties</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="Quiz3.html">Dieren</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+      <style>
+        .box{
+            max-width: 18rem;
+            text-align: center;
+            border: 2px solid red;
+            border-radius: 20px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: black;
+            color: azure;
+        }
+      </style>
+
+</head>
+
+<body background="images/bkworld.jpg">
+    <div class="container d-flex align-items-center" style="min-height: 90vh;">
+        <div class="container box">
+            Quiz <hr>
+            <div id="question_title">question title</div>
+            <div id="option-list"></div>
+            <div id="score-area">Score Area</div>
+            <button class="btn btn-primary rounded-pill" id="submit">SUBMIT</button><br>
+            <button class="btn btn-primary rounded-pill" id="start">START</button><br>   
+            <button class="btn btn-primary rounded-pill" id="play-again">PLAY AGAIN</button>
+        </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+    <!-- adding database:-->
+    <script src="db.js"></script>
+    <script>
+
+
+
+        // defining variables:
+        let questionNo = 0;
+        let score = 0;
+        let question_title = document.getElementById('question_title');
+        let option_list = document.getElementById('option-list');
+        let score_area = document.getElementById('score-area');
+        let btn_submit = document.getElementById('submit');
+        let start = document.getElementById('start');
+        let play_again = document.getElementById('play-again');
+
+
+
+        // hide a few items:
+        hideItems(question_title);
+        hideItems(option_list);
+        hideItems(btn_submit);
+        hideItems(score_area);
+        hideItems(play_again);
+
+
+        //start btn wanneer je erop klikt: 
+        // Add event listener to start button and show quiz interface while hiding start button
+        start.addEventListener('click',function () {
+            show(question_title);
+            show(option_list);
+            show(btn_submit);
+            hideItems(start);
+            loadQuestions();
+        });
+        
+
+        function loadQuestions() {
+            //check if questions are available to ask:
+            if (questionNo < data.length) {
+                let q = data[questionNo].qs;
+                let optionsArray = data[questionNo].options; // array of options
+
+
+                //display questions:
+                question_title.innerText = q;
+
+
+                // display options:
+                option_list.innerText = "";
+                for (let i = 0; i < optionsArray.length; i++){
+                    option_list.innerHTML = option_list.innerHTML + 
+                `
+                  <input type="radio" id="${i}" name="${question_title}">${optionsArray[i]}"</input><br>
+                `;
+                }
+            }else{
+            
+                
+                console.log("no more questions")
+                
+                
+                // Show the score area and set its text content to display the player's score.
+
+                show(score_area);
+                score_area.innerText = "Your score is:" + score;
+
+
+                //hide button submit:
+
+                hideItems(btn_submit);
+                show(play_again);
+            }
+        }
+    
+
+        play_again.addEventListener("click",function(){
+            location.reload();
+        })
+
+
+        btn_submit.addEventListener('click', function () {
+
+            //1.get checked id:
+
+            let id = getCheckedId();
+
+
+
+            //2. compare id to database id:
+            // This block of code checks if the selected option ID matches the answer ID of the current question from the data object.
+            // If the IDs match, it increases the score by 1 and logs a message to the console indicating a correct answer.
+            // It also includes a try-catch block to handle any errors that may occur.
+
+            try {
+                if (id == data[questionNo].answerid) {
+                // correct answer:
+                score++;
+                console.log("correct answer");
+                }
+            } catch (error) {
+
+            }
+
+
+            
+            //3. question no ++:
+            // This line of code increments the value of the questionNo variable by 
+            //1. It is used to keep track of the current question number and move to the next question in the data object.
+
+            questionNo++;
+
+
+
+            // This function loads the next question from the data object and displays it on the screen 
+            //4. load next question:
+            loadQuestions();
+        })
+
+         // This function checks which radio button is selected and returns its ID
+        // If no radio button is selected, it returns undefined.
+
+        function getCheckedId() {
+            for (let i = 0; i < 4; i++ ) {
+                if (document.getElementById(i).checked) {
+                    console.log("you selected:"+ i);
+                    return i;
+                }
+            }
+        }
+
+
+// This function hides the specified HTML element by setting its display property to "none".
+
+        function hideItems(element) {
+            if (element) {
+                element.style.display = "none";
+            }
+        }
+
+
+
+//"This function takes an HTML element and sets its CSS display property to 'block', making it visible on the page."
+
+        function show(element) {
+            if (element) {
+                element.style.display = "block";
+            }
+        }
+
+
+
+        // Call show(start) function to display the start button
+        show(start);
+    </script>
+</body>
